@@ -3,1538 +3,750 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>bashful! — Record. Grow. Share.</title>
+<title>Bashful! — Record. Grow. Share.</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Smooch&family=Dancing+Script:wght@700&display=swap');
 
   :root {
-    --bloom: #FF3CAC;
-    --deep: #07091A;
-    --mid: #0F1230;
-    --card: #0C0F26;
-    --muted: #5A6090;
-    --text: #EEF0FF;
-    --accent: #FF6B9D;
+    --pink: #FF3CAC;
+    --pink2: #FF6B9D;
+    --pink3: #FFB3D9;
+    --navy: #1C1612;
+    --text: #F0EDE8;
+    --muted: #9C9189;
+    --border: #2E2820;
+    --bg: #221E19;
+    --active-bg: #2E2016;
+    --card-bg: #1C1814;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #181410; color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
 
-  body {
-    background: var(--deep);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-                radial-gradient(ellipse at 15% 60%, rgba(255,60,172,0.18) 0%, transparent 55%),
-                radial-gradient(ellipse at 85% 15%, rgba(255,107,157,0.14) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 100%, rgba(255,179,217,0.08) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
-
-  /* HEADER */
   header {
-    padding: 28px 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255,60,172,0.2);
+    padding: 18px 0 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: #181410; position: sticky; top: 0; z-index: 50;
   }
 
   .logo {
-    font-family: 'Dancing Script', cursive;
-    font-size: 36px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #FF3CAC 0%, #FF9ECD 60%, #FFB3D9 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.5px;
+    font-family: 'Smooch', cursive; font-size: 48px; font-weight: 400;
+    background: linear-gradient(135deg, #C9A84C 0%, #F5D57A 50%, #C9A84C 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;
   }
+  .logo .ex { font-family: 'Smooch', cursive; font-size: 56px; font-weight: 400; background: linear-gradient(135deg, #F5D57A 0%, #C9A84C 60%, #F5D57A 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-  .logo span {
-    font-family: 'Dancing Script', cursive;
-    font-size: 42px;
-    background: linear-gradient(135deg, #FF0099, #FF3CAC);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 700;
+  .btn-new-rec {
+    display:flex; align-items:center; gap:7px;
+    background: linear-gradient(135deg,#FF3CAC,#FF6B9D); color:#fff; border:none;
+    border-radius:10px; padding:10px 18px; font-family:'DM Sans',sans-serif;
+    font-size:14px; font-weight:600; cursor:pointer; transition:all .2s;
+    box-shadow:0 2px 12px rgba(255,60,172,.25);
   }
+  .btn-new-rec:hover { transform:translateY(-1px); box-shadow:0 4px 18px rgba(255,60,172,.35); }
 
-  .tagline {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  .page-tabs {
+    display:flex; gap:2px; background:#221E19; border:1px solid var(--border);
+    border-radius:12px; padding:4px; margin:20px 0 0;
   }
-
-  /* MAIN LAYOUT */
-  .main { display: grid; grid-template-columns: 1fr 340px; gap: 24px; padding: 32px 0; }
-
-  /* RECORDER PANEL */
-  .recorder-panel {
-    background: var(--card);
-    border: 1px solid rgba(255,60,172,0.1);
-    border-radius: 20px;
-    overflow: hidden;
+  .page-tab {
+    flex:1; padding:10px 12px; border-radius:8px; border:none; background:transparent;
+    color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all .2s;
   }
+  .page-tab.active { background:#1C1814; color:var(--pink); font-weight:600; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+  .page-tab:hover:not(.active) { color:var(--text); }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  .studio-layout { display:grid; grid-template-columns:1fr 360px; gap:20px; padding:24px 0 40px; }
+
+  .recorder-panel { background:#1C1814; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
 
   .preview-area {
-    position: relative;
-    background: #06071A;
-    aspect-ratio: 16/9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    position:relative; background:#111827; aspect-ratio:16/9;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
+  #videoPreview { width:100%; height:100%; object-fit:cover; display:none; }
+  .preview-placeholder { text-align:center; color:#9CA3AF; }
+  .preview-placeholder .big-icon { font-size:48px; margin-bottom:12px; opacity:.5; }
+  .preview-placeholder p { font-size:13px; }
 
-  #videoPreview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-  }
+  #webcamBubble { position:absolute; bottom:16px; right:16px; width:100px; height:100px; border-radius:50%; border:2px solid var(--pink); overflow:hidden; display:none; background:#111; }
+  #webcamBubble video { width:100%; height:100%; object-fit:cover; }
 
-  .preview-placeholder {
-    text-align: center;
-    opacity: 0.4;
-  }
+  .rec-indicator { position:absolute; top:14px; left:14px; display:none; align-items:center; gap:6px; background:rgba(0,0,0,.65); border-radius:20px; padding:4px 12px 4px 8px; font-size:12px; font-weight:600; color:#fff; letter-spacing:1px; }
+  .rec-dot { width:8px; height:8px; border-radius:50%; background:#FF3B30; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  .preview-placeholder svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; }
-  .preview-placeholder p { font-size: 13px; color: var(--muted); }
-
-  /* WEBCAM BUBBLE */
-  #webcamBubble {
-    position: absolute;
-    bottom: 16px;
-    right: 16px;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 2px solid var(--bloom);
-    overflow: hidden;
-    display: none;
-    background: #06071A;
-  }
-
-  #webcamBubble video { width: 100%; height: 100%; object-fit: cover; }
-
-  /* REC INDICATOR */
-  .rec-indicator {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    display: none;
-    align-items: center;
-    gap: 6px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 20px;
-    padding: 4px 12px 4px 8px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1px;
-  }
-
-  .rec-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #FF3B30;
-    animation: pulse 1s infinite;
-  }
-
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  /* CONTROLS */
-  .controls {
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .mode-row {
-    display: flex;
-    gap: 10px;
-  }
-
+  .controls { padding:18px 20px; display:flex; flex-direction:column; gap:14px; }
+  .mode-row { display:flex; gap:8px; }
   .mode-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,60,172,0.15);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    flex:1; padding:10px 8px; border-radius:10px; border:1.5px solid var(--border);
+    background:#1C1814; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:12px;
+    font-weight:500; cursor:pointer; transition:all .2s; display:flex; flex-direction:column; align-items:center; gap:4px;
   }
+  .mode-btn svg { width:18px; height:18px; }
+  .mode-btn.active { border-color:var(--pink); color:var(--pink); background:var(--active-bg); }
+  .mode-btn:hover:not(.active) { border-color:var(--pink2); color:var(--text); }
 
-  .mode-btn svg { width: 18px; height: 18px; }
-  .mode-btn.active { border-color: var(--bloom); color: var(--bloom); background: rgba(255,60,172,0.07); }
-  .mode-btn:hover:not(.active) { border-color: rgba(255,60,172,0.3); color: var(--text); }
-
-  .action-row { display: flex; gap: 10px; }
-
+  .action-row { display:flex; gap:8px; }
   .btn-record {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(135deg, #FF3CAC, #00D4FF);
-    color: #07091A;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    flex:1; padding:13px; border-radius:10px; border:none;
+    background:linear-gradient(135deg,#FF3CAC,#FF6B9D); color:#fff;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer;
+    transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 2px 10px rgba(255,60,172,.2);
   }
-
-  .btn-record:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  .btn-record.recording { background: #FF3B30; color: white; }
-  .btn-record.recording:hover { background: #ff5445; }
+  .btn-record:hover { filter:brightness(1.05); transform:translateY(-1px); }
+  .btn-record.recording { background:#FF3B30; box-shadow:0 2px 10px rgba(255,59,48,.3); }
 
   .btn-upload {
-    padding: 14px 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,60,172,0.2);
-    background: transparent;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    padding:13px 16px; border-radius:10px; border:1.5px solid var(--border); background:#1C1814;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+    cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:6px;
   }
+  .btn-upload:hover { border-color:var(--pink); color:var(--pink); }
+  #fileInput { display:none; }
+  .timer { text-align:center; font-size:13px; color:var(--muted); letter-spacing:1px; display:none; }
 
-  .btn-upload:hover { border-color: var(--bloom); color: var(--bloom); }
+  .sidebar { display:flex; flex-direction:column; }
 
-  #fileInput { display: none; }
-
-  /* TIMER */
-  .timer {
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    display: none;
+  .video-tabs { display:flex; border-bottom:none; background:#1C1814; border-radius:16px 16px 0 0; overflow:hidden; border:1px solid var(--border); border-bottom:none; }
+  .vtab {
+    flex:1; padding:12px 6px; border:none; background:transparent; color:var(--muted);
+    font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; cursor:pointer; transition:all .2s;
+    border-bottom:2px solid transparent;
   }
+  .vtab.active { color:var(--pink); border-bottom-color:var(--pink); font-weight:600; background:#1C1814; }
+  .vtab:hover:not(.active) { color:var(--text); background:#221E19; }
 
-  /* SIDEBAR */
-  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+  .vtab-panels { background:#1C1814; border:1px solid var(--border); border-top:none; border-radius:0 0 16px 16px; min-height:320px; box-shadow:0 2px 12px rgba(0,0,0,.05); }
+  .vtab-panel { display:none; padding:18px; }
+  .vtab-panel.active { display:block; }
 
-  .card {
-    background: var(--card);
-    border: 1px solid rgba(255,60,172,0.08);
-    border-radius: 16px;
-    padding: 20px;
+  .upsell-card {
+    border-radius:12px; border:1.5px solid transparent; background:linear-gradient(#fff,#fff) padding-box,
+    linear-gradient(135deg,#FF3CAC,#FF6B9D,#FFB3D9) border-box;
+    padding:14px; margin-bottom:16px; background-color:#221A16;
   }
-
-  .card-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--muted);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .card-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255,60,172,0.08);
-  }
-
-  /* AI OUTPUT */
-  .ai-section { display: none; }
-  .ai-section.visible { display: block; }
-
-  .ai-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: 13px;
-    padding: 12px 0;
-  }
-
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,60,172,0.2);
-    border-top-color: var(--bloom);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .transcript-box {
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text);
-    max-height: 160px;
-    overflow-y: auto;
-    margin-bottom: 16px;
-  }
-
-  .transcript-box::-webkit-scrollbar { width: 4px; }
-  .transcript-box::-webkit-scrollbar-track { background: transparent; }
-  .transcript-box::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
-
-  .tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-
-  .tag {
-    background: rgba(255,60,172,0.1);
-    border: 1px solid rgba(255,60,172,0.2);
-    color: var(--bloom);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .tag:hover { background: rgba(255,60,172,0.2); }
-
-  .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-
-  .checklist li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .check-box {
-    width: 16px; height: 16px;
-    border-radius: 4px;
-    border: 1px solid var(--muted);
-    flex-shrink: 0;
-    margin-top: 1px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .check-box.checked { background: var(--bloom); border-color: var(--bloom); }
-  .check-box.checked::after { content: '✓'; font-size: 10px; color: var(--deep); font-weight: 700; }
-
-  /* LIBRARY */
-  .library-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .library-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .library-item:hover { background: rgba(255,60,172,0.05); }
-
-  .lib-thumb {
-    width: 44px; height: 32px;
-    border-radius: 6px;
-    background: var(--mid);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .lib-thumb svg { width: 14px; height: 14px; color: var(--muted); }
-
-  .lib-info { flex: 1; min-width: 0; }
-  .lib-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .lib-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .lib-share {
-    background: transparent;
-    border: 1px solid rgba(255,60,172,0.15);
-    color: var(--bloom);
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
-
-  .lib-share:hover { background: rgba(255,60,172,0.1); }
-
-  /* COPY BTNS */
-  .copy-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: var(--muted);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    padding: 4px 0;
-    transition: color 0.15s;
-    margin-top: 6px;
-  }
-
-  .copy-btn:hover { color: var(--bloom); }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 20px 0;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--bloom);
-    color: var(--deep);
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 999;
-    pointer-events: none;
-  }
-
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid rgba(255,60,172,0.08);
-    padding: 20px 0;
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  footer span { color: var(--bloom); }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .main { grid-template-columns: 1fr; }
-  }
-
-  /* NAV TABS */
-  .page-tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--card);
-    border: 1px solid rgba(255,60,172,0.1);
-    border-radius: 12px;
-    padding: 4px;
-    margin: 24px 0 0;
-  }
-
-  .page-tab {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-  }
-
-  .page-tab.active { background: linear-gradient(135deg, rgba(255,60,172,0.15), rgba(0,212,255,0.1)); color: var(--bloom); border: 1px solid rgba(255,60,172,0.2); }
-  .page-tab:hover:not(.active) { color: var(--text); }
-
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* SHARE MODAL */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--mid);
-    border: 1px solid rgba(255,60,172,0.15);
-    border-radius: 20px;
-    padding: 28px;
-    width: 480px;
-    max-width: 95vw;
-    position: relative;
-  }
-
-  .modal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-
-  .modal-close {
-    position: absolute;
-    top: 20px; right: 20px;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-  }
-
-  .modal-close:hover { color: var(--text); }
-
-  /* GIF PREVIEW */
-  .gif-preview {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    cursor: pointer;
-    background: #06071A;
-    aspect-ratio: 16/9;
-  }
-
-  .gif-canvas { width: 100%; height: 100%; display: block; }
-
-  .gif-play-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.3);
-    transition: background 0.2s;
-  }
-
-  .gif-preview:hover .gif-play-overlay { background: rgba(0,0,0,0.5); }
-
-  .gif-play-btn {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: var(--bloom);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--deep);
-    box-shadow: 0 4px 20px rgba(255,60,172,0.3);
-    transition: transform 0.2s;
-  }
-
-  .gif-preview:hover .gif-play-btn { transform: scale(1.1); }
-
-  .gif-badge {
-    position: absolute;
-    top: 10px; left: 10px;
-    background: #FF3CAC;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  /* SHARE OPTIONS */
-  .share-options { display: flex; flex-direction: column; gap: 10px; }
-
-  .share-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
-    padding: 10px 14px;
-  }
-
-  .share-label { font-size: 11px; color: var(--muted); width: 60px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 1px; }
-
-  .share-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .share-copy {
-    background: rgba(255,60,172,0.1);
-    border: 1px solid rgba(255,60,172,0.2);
-    color: var(--bloom);
-    font-size: 11px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0;
-    transition: all 0.15s;
-  }
-
-  .share-copy:hover { background: rgba(255,60,172,0.2); }
-
-  /* SEND TO BRAND */
-  .brand-send-section { margin-top: 20px; }
-  .brand-send-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 10px; }
-
-  .brand-select-row { display: flex; gap: 8px; }
-
-  .brand-select {
-    flex: 1;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,60,172,0.1);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 9px 12px;
-    border-radius: 8px;
-    outline: none;
-  }
-
-  .brand-select option { background: var(--mid); }
-
-  .btn-send-brand {
-    background: var(--bloom);
-    border: none;
-    color: var(--deep);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 9px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-send-brand:hover { background: #d8ff5a; }
-
-  /* BRAND DEAL TRACKER PAGE */
-  .tracker-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 24px 0 0;
-  }
-
-  .tracker-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 700;
-  }
-
-  .btn-add-brand {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bloom);
-    border: none;
-    color: var(--deep);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-add-brand:hover { background: #d8ff5a; transform: translateY(-1px); }
-
-  /* STATS ROW */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .stat-card {
-    background: var(--card);
-    border: 1px solid rgba(255,60,172,0.08);
-    border-radius: 14px;
-    padding: 16px;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #FF3CAC, #00D4FF);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-  }
-
-  .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
-
-  /* BRAND TABLE */
-  .brand-table-wrap {
-    background: var(--card);
-    border: 1px solid rgba(255,60,172,0.08);
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .brand-table { width: 100%; border-collapse: collapse; }
-
-  .brand-table th {
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    border-bottom: 1px solid rgba(120,80,255,0.14);
-    font-weight: 500;
-  }
-
-  .brand-table td {
-    padding: 14px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid rgba(200,240,74,0.04);
-    vertical-align: middle;
-  }
-
-  .brand-table tr:last-child td { border-bottom: none; }
-  .brand-table tr:hover td { background: rgba(255,60,172,0.02); }
-
-  .brand-name-cell { font-weight: 500; }
-  .brand-contact { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
-
-  .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-
-  .status-sent { background: rgba(60,60,140,0.4); color: #8888FF; }
-  .status-opened { background: rgba(255,60,172,0.15); color: var(--bloom); }
-  .status-watched { background: rgba(255,200,0,0.15); color: #FFC800; }
-  .status-responded { background: rgba(100,180,255,0.15); color: #64B4FF; }
-  .status-deal { background: rgba(255,60,172,0.25); color: var(--bloom); border: 1px solid rgba(255,60,172,0.3); }
-  .status-pending { background: rgba(100,100,100,0.2); color: #888; }
-
-  .views-cell { color: var(--muted); font-size: 12px; }
-  .views-cell strong { color: var(--text); font-size: 14px; }
-
-  .last-seen { font-size: 11px; color: var(--muted); }
-
-  .brand-actions { display: flex; gap: 6px; }
-
-  .btn-icon {
-    background: transparent;
-    border: 1px solid rgba(255,60,172,0.1);
-    color: var(--muted);
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-size: 12px;
-  }
-
-  .btn-icon:hover { border-color: var(--bloom); color: var(--bloom); }
-
-  /* ADD BRAND MODAL */
-  .form-group { margin-bottom: 14px; }
-
-  .form-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; display: block; }
-
-  .form-input {
-    width: 100%;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,60,172,0.1);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .form-input:focus { border-color: rgba(255,60,172,0.3); }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .btn-primary {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: var(--bloom);
-    color: var(--deep);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 6px;
-    transition: all 0.15s;
-  }
-
-  .btn-primary:hover { background: #d8ff5a; }
-
-  /* ACTIVITY PULSE */
-  @keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-  .brand-table tr { animation: fadeInUp 0.3s ease both; }
+  .upsell-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .upsell-sub { font-size:12px; color:var(--muted); margin-bottom:8px; line-height:1.5; }
+  .upsell-link { font-size:12px; color:var(--pink); font-weight:600; cursor:pointer; }
+
+  .section-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .auto-badge { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--muted); font-weight:400; cursor:pointer; }
+
+  .edit-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .edit-item:last-child { border-bottom:none; }
+  .edit-icon { width:32px; height:32px; border-radius:8px; background:var(--bg); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--muted); }
+  .edit-text { flex:1; font-size:13px; color:var(--text); line-height:1.4; }
+  .filler-input { display:inline-block; width:32px; text-align:center; border:1.5px solid var(--pink); border-radius:6px; font-size:12px; font-weight:600; color:var(--pink); padding:1px 4px; background:var(--active-bg); }
+
+  .toggle { width:38px; height:22px; border-radius:11px; background:#E5E7EB; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; border:none; }
+  .toggle::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:#1C1814; top:2px; left:2px; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .toggle.on { background:var(--pink); }
+  .toggle.on::after { transform:translateX(16px); }
+
+  .action-card { background:#22201C; border-radius:12px; padding:14px; margin-bottom:12px; display:flex; gap:10px; align-items:flex-start; position:relative; }
+  .action-card-close { position:absolute; top:10px; right:10px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; line-height:1; }
+  .action-card-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .action-card-sub { font-size:12px; color:var(--muted); line-height:1.5; }
+  .action-card-link { color:var(--pink); font-weight:600; cursor:pointer; }
+
+  .gen-link-row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:all .15s; }
+  .gen-link-row:last-child { border-bottom:none; }
+  .gen-link-row:hover { background:var(--bg); margin:0 -18px; padding:11px 18px; border-radius:8px; }
+  .gen-row-left { display:flex; align-items:center; gap:10px; }
+  .gen-icon { width:30px; height:30px; border-radius:8px; background:#1F2937; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; }
+  .gen-label { font-size:13px; color:var(--text); }
+  .gen-section-title { font-size:14px; font-weight:700; color:var(--text); margin:4px 0 10px; }
+
+  .sub-label { font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin:14px 0 8px; font-weight:600; }
+  .transcript-box { background:var(--bg); border-radius:10px; padding:14px; font-size:13px; line-height:1.7; color:var(--text); max-height:160px; overflow-y:auto; margin-bottom:10px; border:1px solid var(--border); }
+  .tags-wrap { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .tag { background:var(--active-bg); border:1px solid rgba(255,60,172,.2); color:var(--pink); font-size:11px; padding:4px 10px; border-radius:20px; cursor:pointer; }
+  .checklist { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .checklist li { display:flex; align-items:flex-start; gap:10px; font-size:13px; line-height:1.4; }
+  .check-box { width:17px; height:17px; border-radius:4px; border:1.5px solid #D1D5DB; flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; background:#1C1814; transition:all .15s; }
+  .check-box.checked { background:var(--pink); border-color:var(--pink); }
+  .check-box.checked::after { content:'✓'; font-size:10px; color:#fff; font-weight:700; }
+  .copy-btn { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); background:transparent; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; padding:4px 0; transition:color .15s; margin-bottom:4px; }
+  .copy-btn:hover { color:var(--pink); }
+
+  .ai-loading { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; padding:20px 0; }
+  .spinner { width:16px; height:16px; border:2px solid rgba(255,60,172,.2); border-top-color:var(--pink); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .ai-idle { color:var(--muted); font-size:13px; text-align:center; padding:24px 0; line-height:1.7; }
+
+  .activity-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--pink),var(--pink2)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .activity-text { flex:1; color:var(--text); line-height:1.4; }
+  .activity-time { font-size:11px; color:var(--muted); }
+
+  .card { background:#1C1814; border:1px solid var(--border); border-radius:16px; padding:18px; margin-top:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+  .card-title { font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:14px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .card-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .library-list { display:flex; flex-direction:column; gap:8px; }
+  .library-item { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px; background:var(--bg); cursor:pointer; transition:all .15s; border:1px solid transparent; }
+  .library-item:hover { border-color:var(--pink3); background:var(--active-bg); }
+  .lib-thumb { width:48px; height:34px; border-radius:6px; background:#1F2937; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .lib-thumb svg { width:14px; height:14px; }
+  .lib-info { flex:1; min-width:0; }
+  .lib-name { font-size:12px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
+  .lib-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+  .lib-actions { display:flex; gap:4px; }
+  .lib-btn { background:#1C1814; border:1px solid var(--border); color:var(--muted); font-size:11px; padding:4px 8px; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
+  .lib-btn:hover { border-color:var(--pink); color:var(--pink); }
+  .empty-state { text-align:center; padding:24px 0; color:var(--muted); font-size:13px; line-height:1.7; }
+
+  /* tracker */
+  .tracker-header { display:flex; align-items:center; justify-content:space-between; padding:24px 0 0; margin-bottom:20px; }
+  .tracker-title { font-size:22px; font-weight:700; color:var(--text); }
+  .btn-add-brand { display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#FF3CAC,#FF6B9D); border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; padding:10px 16px; border-radius:10px; cursor:pointer; transition:all .15s; box-shadow:0 2px 8px rgba(255,60,172,.2); }
+  .btn-add-brand:hover { transform:translateY(-1px); }
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+  .stat-card { background:#221E19; border:1px solid var(--border); border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.3); }
+  .stat-num { font-size:28px; font-weight:700; background:linear-gradient(135deg,#FF3CAC,#FF6B9D); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
+  .brand-table-wrap { background:#1C1814; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+  .brand-table { width:100%; border-collapse:collapse; }
+  .brand-table th { padding:12px 16px; text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); border-bottom:1px solid var(--border); font-weight:600; background:var(--bg); }
+  .brand-table td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .brand-table tr:last-child td { border-bottom:none; }
+  .brand-table tr:hover td { background:var(--bg); }
+  .brand-name-cell { font-weight:600; color:var(--text); }
+  .brand-contact { font-size:11px; color:var(--muted); margin-top:2px; }
+  .status-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:4px 10px; border-radius:20px; font-weight:600; cursor:pointer; border:none; font-family:'DM Sans',sans-serif; transition:all .15s; }
+  .status-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status-sent { background:#2E2820; color:#6B7280; }
+  .status-opened { background:#2E1A20; color:var(--pink); }
+  .status-watched { background:#2E2410; color:#D97706; }
+  .status-responded { background:#22201C; color:#2563EB; }
+  .status-deal { background:#1A2A1A; color:#16A34A; }
+  .status-pending { background:#221E19; color:#9CA3AF; }
+  .btn-icon { background:#1C1814; border:1px solid var(--border); color:var(--muted); width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .15s; font-size:12px; }
+  .btn-icon:hover { border-color:var(--pink); color:var(--pink); }
+
+  /* modals */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); z-index:100; display:none; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#1C1814; border:1px solid #2E2820; border-radius:20px; padding:28px; width:480px; max-width:95vw; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.15); }
+  .modal-title { font-size:20px; font-weight:700; margin-bottom:6px; color:var(--text); }
+  .modal-sub { font-size:13px; color:var(--muted); margin-bottom:20px; }
+  .modal-close { position:absolute; top:20px; right:20px; background:var(--bg); border:1px solid var(--border); color:var(--muted); width:28px; height:28px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .gif-preview { position:relative; border-radius:12px; overflow:hidden; margin-bottom:18px; cursor:pointer; background:#111827; aspect-ratio:16/9; }
+  .gif-canvas { width:100%; height:100%; display:block; }
+  .gif-play-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.25); transition:background .2s; }
+  .gif-play-btn { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#FF3CAC,#FF6B9D); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 4px 16px rgba(255,60,172,.4); transition:transform .2s; }
+  .gif-preview:hover .gif-play-btn { transform:scale(1.1); }
+  .gif-badge { position:absolute; top:10px; left:10px; background:#FF3CAC; color:#fff; font-size:10px; font-weight:700; letter-spacing:1.5px; padding:3px 8px; border-radius:4px; }
+  .share-options { display:flex; flex-direction:column; gap:8px; }
+  .share-row { display:flex; align-items:center; gap:10px; background:var(--bg); border-radius:10px; padding:10px 14px; border:1px solid var(--border); }
+  .share-label { font-size:11px; color:var(--muted); width:55px; flex-shrink:0; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+  .share-input { flex:1; background:transparent; border:none; color:var(--text); font-size:12px; font-family:'DM Sans',sans-serif; outline:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .share-copy { background:var(--active-bg); border:1px solid rgba(255,60,172,.2); color:var(--pink); font-size:11px; padding:5px 10px; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600; flex-shrink:0; }
+  .share-copy:hover { background:rgba(255,60,172,.15); }
+  .brand-send-section { margin-top:18px; }
+  .brand-send-title { font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:10px; font-weight:600; }
+  .brand-select-row { display:flex; gap:8px; }
+  .brand-select { flex:1; background:var(--bg); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; padding:9px 12px; border-radius:8px; outline:none; }
+  .btn-send-brand { background:linear-gradient(135deg,#FF3CAC,#FF6B9D); border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; padding:9px 16px; border-radius:8px; cursor:pointer; }
+  .form-group { margin-bottom:14px; }
+  .form-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px; display:block; font-weight:600; }
+  .form-input { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; padding:10px 14px; outline:none; transition:border-color .15s; }
+  .form-input:focus { border-color:var(--pink); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .btn-primary { width:100%; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg,#FF3CAC,#FF6B9D); color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; margin-top:6px; box-shadow:0 2px 10px rgba(255,60,172,.2); }
+
+  .editor-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 24px; text-align:center; }
+  .editor-placeholder .big-icon { font-size:52px; margin-bottom:20px; }
+  .editor-placeholder h2 { font-size:24px; font-weight:700; color:var(--text); margin-bottom:10px; }
+  .editor-placeholder p { color:var(--muted); font-size:14px; max-width:420px; line-height:1.7; margin-bottom:28px; }
+  .coming-soon-card { background:var(--active-bg); border:1.5px dashed rgba(255,60,172,.25); border-radius:14px; padding:24px 40px; }
+  .coming-soon-label { font-size:12px; text-transform:uppercase; letter-spacing:2px; color:var(--pink); font-weight:700; }
+  .coming-soon-items { color:var(--muted); font-size:13px; margin-top:6px; }
+
+  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--navy); color:#fff; padding:10px 22px; border-radius:30px; font-size:13px; font-weight:500; opacity:0; transition:all .3s; z-index:999; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer { border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:11px; color:var(--muted); letter-spacing:1px; background:#181410; }
+  footer span { color:var(--pink); font-weight:600; }
+
+  @media(max-width:768px) { .studio-layout{grid-template-columns:1fr} .stats-row{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
 <body>
-
 <div class="container">
   <header>
-    <div class="logo">bashful<span>!</span></div>
-    <div class="tagline">Record · Share · Track</div>
+    <div class="logo">b<span class="ex">ashful!</span></div>
+    <button class="btn-new-rec" onclick="document.querySelectorAll('.page-tab')[0].click()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+      New Recording
+    </button>
   </header>
 
   <div class="page-tabs">
-    <button class="page-tab active" onclick="switchPage('recorder')">🎬 Studio</button>
-    <button class="page-tab" onclick="switchPage('tracker')">📊 Brand Deal Tracker</button>
-    <button class="page-tab" onclick="switchPage('editor')">✂️ Editor <span style="font-size:10px;opacity:0.6;font-style:italic">— coming soon</span></button>
+    <button class="page-tab active" onclick="switchPage('recorder',this)">🎬 Studio</button>
+    <button class="page-tab" onclick="switchPage('tracker',this)">📊 Brand Tracker</button>
+    <button class="page-tab" onclick="switchPage('editor',this)">✂️ Editor <span style="font-size:10px;opacity:.55;font-style:italic">— soon</span></button>
   </div>
 
-  <!-- PAGE: STUDIO -->
+  <!-- STUDIO -->
   <div class="page active" id="page-recorder">
-  <div class="main">
-    <!-- LEFT: RECORDER -->
-    <div class="recorder-panel">
-      <div class="preview-area">
-        <video id="videoPreview" autoplay muted playsinline></video>
-        <div class="preview-placeholder" id="placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10"/>
-            <polygon points="10,8 16,12 10,16"/>
-          </svg>
-          <p>Select a recording mode to begin</p>
+    <div class="studio-layout">
+      <div>
+        <div class="recorder-panel">
+          <div class="preview-area">
+            <video id="videoPreview" playsinline></video>
+            <div class="preview-placeholder" id="placeholder">
+              <div class="big-icon">🎬</div>
+              <p>Select a recording mode below to begin</p>
+            </div>
+            <div id="webcamBubble"><video id="webcamVideo" autoplay muted playsinline></video></div>
+            <div class="rec-indicator" id="recIndicator"><div class="rec-dot"></div> REC</div>
+          </div>
+          <div class="controls">
+            <div class="mode-row">
+              <button class="mode-btn" id="modeScreen" onclick="setMode('screen')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>Screen
+              </button>
+              <button class="mode-btn" id="modeWebcam" onclick="setMode('webcam')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="10" r="4"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Webcam
+              </button>
+              <button class="mode-btn" id="modeBoth" onclick="setMode('both')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><circle cx="18" cy="16" r="3"/></svg>Both
+              </button>
+            </div>
+            <div class="action-row">
+              <button class="btn-record" id="recordBtn" onclick="toggleRecord()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>Start Recording
+              </button>
+              <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload
+              </button>
+              <input type="file" id="fileInput" accept="video/*" onchange="handleUpload(event)">
+            </div>
+            <div class="timer" id="timer">⏱ 00:00</div>
+          </div>
         </div>
-        <div id="webcamBubble"><video id="webcamVideo" autoplay muted playsinline></video></div>
-        <div class="rec-indicator" id="recIndicator">
-          <div class="rec-dot"></div> REC
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="mode-row">
-          <button class="mode-btn" id="modeScreen" onclick="setMode('screen')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
-            Screen
-          </button>
-          <button class="mode-btn" id="modeWebcam" onclick="setMode('webcam')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="10" r="4"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
-            Webcam
-          </button>
-          <button class="mode-btn" id="modeBoth" onclick="setMode('both')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><circle cx="18" cy="16" r="3"/></svg>
-            Both
-          </button>
-
-        </div>
-
-        <div class="action-row">
-          <button class="btn-record" id="recordBtn" onclick="toggleRecord()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
-            Start Recording
-          </button>
-          <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload
-          </button>
-          <input type="file" id="fileInput" accept="video/*,audio/*" onchange="handleUpload(event)">
-        </div>
-
-        <div class="timer" id="timer">⏱ 00:00</div>
-      </div>
-    </div>
-
-    <!-- RIGHT: SIDEBAR -->
-    <div class="sidebar">
-
-      <!-- AI RESULTS -->
-      <div class="card">
-        <div class="card-title">AI Output</div>
-
-        <div id="aiIdle" style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">
-          Record or upload a video to generate AI insights
-        </div>
-
-        <div class="ai-section" id="aiLoading">
-          <div class="ai-loading"><div class="spinner"></div> Analyzing your content…</div>
-        </div>
-
-        <div class="ai-section" id="aiResults">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;">Transcript</div>
-          <div class="transcript-box" id="transcriptBox"></div>
-          <button class="copy-btn" onclick="copyText('transcriptBox')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy transcript
-          </button>
-
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:16px 0 8px;">Hashtags & Keywords</div>
-          <div class="tags-wrap" id="tagsWrap"></div>
-          <button class="copy-btn" onclick="copyTags()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy all tags
-          </button>
-
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:16px 0 8px;">Action Checklist</div>
-          <ul class="checklist" id="checklist"></ul>
+        <div class="card">
+          <div class="card-title">Library</div>
+          <div class="library-list" id="libraryList">
+            <div class="empty-state">No recordings yet.<br>Hit record or upload a video to get started.</div>
+          </div>
         </div>
       </div>
 
-      <!-- LIBRARY -->
-      <div class="card">
-        <div class="card-title">Library</div>
-        <div class="library-list" id="libraryList">
-          <div class="empty-state">No recordings yet</div>
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="video-tabs">
+          <button class="vtab active" onclick="switchVTab('edit',this)">Edit</button>
+          <button class="vtab" onclick="switchVTab('activity',this)">Activity</button>
+          <button class="vtab" onclick="switchVTab('generate',this)">Generate</button>
+          <button class="vtab" onclick="switchVTab('transcript',this)">Transcript</button>
+        </div>
+        <div class="vtab-panels">
+
+          <!-- EDIT TAB -->
+          <div class="vtab-panel active" id="vtab-edit">
+            
+            <div class="section-title">Make edits <span class="auto-badge">✦ Auto-applied ▾</span></div>
+            <div class="edit-item">
+              <div class="edit-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+              <div class="edit-text">Edit and trim video, add clips, links, and text overlays</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="edit-item">
+              <div class="edit-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+              <div class="edit-text">Remove silences</div>
+              <button class="toggle" onclick="this.classList.toggle('on')"></button>
+            </div>
+            <div class="edit-item">
+              <div class="edit-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+              <div class="edit-text">Remove <input class="filler-input" value="10"> filler words</div>
+              <button class="toggle" onclick="this.classList.toggle('on')"></button>
+            </div>
+            <div style="margin-top:18px">
+              <div class="section-title">Take action</div>
+              <div class="action-card" id="transformCard">
+                <div style="font-size:20px">✦</div>
+                <div>
+                  <div class="action-card-title">Transform your video</div>
+                  <div class="action-card-sub">Turn your video into a how-to guide, SOP, or team resource. <span class="action-card-link" onclick="switchVTab('generate',document.querySelectorAll('.vtab')[2])">Try now</span></div>
+                </div>
+                <button class="action-card-close" onclick="document.getElementById('transformCard').style.display='none'">✕</button>
+              </div>
+              <div class="gen-link-row" onclick="switchVTab('generate',document.querySelectorAll('.vtab')[2])">
+                <div class="gen-row-left"><div class="gen-icon">📄</div><div class="gen-label">Generate a document</div></div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVITY TAB -->
+          <div class="vtab-panel" id="vtab-activity">
+            <div id="activityList"><div class="ai-idle">No activity yet.<br>Share a video to start tracking views.</div></div>
+          </div>
+
+          <!-- GENERATE TAB -->
+          <div class="vtab-panel" id="vtab-generate">
+            <div class="action-card" style="margin-bottom:14px">
+              <div style="font-size:18px">✦</div>
+              <div><div class="action-card-title">Transform your video</div><div class="action-card-sub">Let Bashful! AI create documentation using your video as the source of truth.</div></div>
+            </div>
+            <div class="gen-section-title">Documentation</div>
+            <div class="gen-link-row" onclick="generateDoc('SOP')"><div class="gen-row-left"><div class="gen-icon">📋</div><div class="gen-label">SOP</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-link-row" onclick="generateDoc('How-to guide')"><div class="gen-row-left"><div class="gen-icon">📖</div><div class="gen-label">How-to guide</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-link-row" onclick="generateDoc('Bug report')"><div class="gen-row-left"><div class="gen-icon">🐛</div><div class="gen-label">Bug report</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-link-row" onclick="generateDoc('QA steps')"><div class="gen-row-left"><div class="gen-icon">✅</div><div class="gen-label">QA steps</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-link-row" onclick="generateDoc('Code doc')"><div class="gen-row-left"><div class="gen-icon">💻</div><div class="gen-label">Code doc</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-section-title" style="margin-top:16px">Messaging</div>
+            <div class="gen-link-row" onclick="generateDoc('Slack & Teams message')"><div class="gen-row-left"><div class="gen-icon">💬</div><div class="gen-label">Slack &amp; Teams</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="gen-link-row" onclick="generateDoc('Email summary')"><div class="gen-row-left"><div class="gen-icon">✉️</div><div class="gen-label">Email</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div id="genLoading" style="display:none" class="ai-loading"><div class="spinner"></div> Generating…</div>
+            <div id="genOutput" style="display:none;margin-top:14px">
+              <div class="sub-label" id="genOutputLabel">Generated</div>
+              <div class="transcript-box" id="genOutputBox" style="max-height:220px"></div>
+              <button class="copy-btn" onclick="copyText('genOutputBox')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+            </div>
+          </div>
+
+          <!-- TRANSCRIPT TAB -->
+          <div class="vtab-panel" id="vtab-transcript">
+            <div id="transcriptIdle" class="ai-idle">Record or upload a video to generate a transcript, hashtags, keywords, and action checklist.</div>
+            <div id="aiLoading" style="display:none" class="ai-loading"><div class="spinner"></div> Analyzing your content…</div>
+            <div id="aiResults" style="display:none">
+              <div class="sub-label">Transcript</div>
+              <div class="transcript-box" id="transcriptBox"></div>
+              <button class="copy-btn" onclick="copyText('transcriptBox')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy transcript</button>
+              <div class="sub-label">Hashtags &amp; Keywords</div>
+              <div class="tags-wrap" id="tagsWrap"></div>
+              <button class="copy-btn" onclick="copyTags()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy all tags</button>
+              <div class="sub-label">Action Checklist</div>
+              <ul class="checklist" id="checklist"></ul>
+            </div>
+          </div>
+
         </div>
       </div>
-
     </div>
   </div>
 
-  </div><!-- /page-recorder -->
-
-  <!-- PAGE: BRAND DEAL TRACKER -->
+  <!-- BRAND TRACKER -->
   <div class="page" id="page-tracker">
     <div class="tracker-header">
       <div class="tracker-title">Brand Deal Tracker</div>
-      <button class="btn-add-brand" onclick="openAddBrand()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Brand
-      </button>
+      <button class="btn-add-brand" onclick="openAddBrand()">+ Add Brand</button>
     </div>
-
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total Pitches</div></div>
       <div class="stat-card"><div class="stat-num" id="statOpened">0</div><div class="stat-label">Opened</div></div>
       <div class="stat-card"><div class="stat-num" id="statWatched">0</div><div class="stat-label">Watched</div></div>
       <div class="stat-card"><div class="stat-num" id="statDeals">0</div><div class="stat-label">Deals</div></div>
     </div>
-
     <div class="brand-table-wrap">
       <table class="brand-table">
-        <thead>
-          <tr>
-            <th>Brand</th>
-            <th>Video Sent</th>
-            <th>Status</th>
-            <th>Views</th>
-            <th>Last Seen</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="brandTableBody">
-          <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;">No brands added yet — click Add Brand to start tracking</td></tr>
-        </tbody>
+        <thead><tr><th>Brand</th><th>Video Sent</th><th>Status</th><th>Views</th><th>Last Seen</th><th>Actions</th></tr></thead>
+        <tbody id="brandTableBody"></tbody>
       </table>
     </div>
-  </div><!-- /page-tracker -->
+  </div>
 
-  <!-- PAGE: EDITOR -->
+  <!-- EDITOR -->
   <div class="page" id="page-editor">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;text-align:center;">
-      <div style="font-size:56px;margin-bottom:24px">✂️</div>
-      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:12px;">Video Editor</div>
-      <div style="color:var(--muted);font-size:14px;max-width:440px;line-height:1.7;margin-bottom:32px;">
-        Trim, cut, add captions, overlays, and music — all inside Bloombush. 
-        Record it in Studio, polish it here, ship it straight to your Brand Deal tracker.
-      </div>
-      <div style="background:var(--card);border:1px dashed rgba(255,60,172,0.2);border-radius:16px;padding:32px 48px;">
-        <div style="font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--bloom);font-weight:600;">Coming Next</div>
-        <div style="color:var(--muted);font-size:13px;margin-top:8px;">Timeline editor · Captions · Trim & cut · Overlays</div>
-      </div>
-    </div>
-  </div><!-- /page-editor -->
-
-  <footer>A <span>Velocity Agentic</span> Platform &nbsp;·&nbsp; bashful! © 2026</footer>
-
-  <!-- SHARE MODAL -->
-  <div class="modal-overlay" id="shareModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
-      <div class="modal-title">Share This Video</div>
-      <div class="modal-sub">Click the preview to play · Copy link or embed code for email</div>
-
-      <div class="gif-preview" onclick="toggleGifPlay()" id="gifPreview">
-        <canvas class="gif-canvas" id="gifCanvas"></canvas>
-        <div class="gif-play-overlay" id="gifOverlay">
-          <div class="gif-play-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-          </div>
-        </div>
-        <div class="gif-badge">GIF PREVIEW</div>
-      </div>
-
-      <div class="share-options">
-        <div class="share-row">
-          <span class="share-label">Link</span>
-          <input class="share-input" id="shareLink" readonly value="https://bashful.velocityagentic.com/v/xxxxxxxx">
-          <button class="share-copy" onclick="copyShareField('shareLink')">Copy</button>
-        </div>
-        <div class="share-row">
-          <span class="share-label">Embed</span>
-          <input class="share-input" id="shareEmbed" readonly value='<a href="#"><img src="https://bashful.velocityagentic.com/gif/xxxxxxxx.gif"/></a>'>
-          <button class="share-copy" onclick="copyShareField('shareEmbed')">Copy</button>
-        </div>
-      </div>
-
-      <div class="brand-send-section">
-        <div class="brand-send-title">Send to Brand</div>
-        <div class="brand-select-row">
-          <select class="brand-select" id="brandSendSelect">
-            <option value="">— Select a brand —</option>
-          </select>
-          <button class="btn-send-brand" onclick="sendToBrand()">Send ✓</button>
-        </div>
+    <div class="editor-placeholder">
+      <div class="big-icon">✂️</div>
+      <h2>Video Editor</h2>
+      <p>Trim, cut, add captions, overlays, and music — all inside Bashful!. Record in Studio, polish it here, ship straight to your Brand Tracker.</p>
+      <div class="coming-soon-card">
+        <div class="coming-soon-label">Coming Next</div>
+        <div class="coming-soon-items">Timeline editor · Captions · Trim &amp; cut · Overlays · Music</div>
       </div>
     </div>
   </div>
 
-  <!-- ADD BRAND MODAL -->
-  <div class="modal-overlay" id="addBrandModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('addBrandModal')">✕</button>
-      <div class="modal-title">Add Brand</div>
-      <div class="modal-sub">Track your outreach and video performance per brand</div>
-      <div class="form-group">
-        <label class="form-label">Brand Name</label>
-        <input class="form-input" id="newBrandName" placeholder="e.g. Gucci, Fenty Beauty…">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Contact Name</label>
-          <input class="form-input" id="newBrandContact" placeholder="e.g. Aria Johnson">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Deal Value ($)</label>
-          <input class="form-input" id="newBrandValue" placeholder="e.g. 5000" type="number">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notes</label>
-        <input class="form-input" id="newBrandNotes" placeholder="e.g. Pitched spring campaign collab">
-      </div>
-      <button class="btn-primary" onclick="addBrand()">Add Brand</button>
+  <footer>A <span>Velocity Agentic</span> Platform &nbsp;·&nbsp; Bashful! © 2026</footer>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
+    <div class="modal-title">Share This Video</div>
+    <div class="modal-sub">Animated GIF preview · Copy link or embed for email</div>
+    <div class="gif-preview" onclick="copyShareField('shareEmbed')">
+      <canvas class="gif-canvas" id="gifCanvas"></canvas>
+      <div class="gif-play-overlay"><div class="gif-play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+      <div class="gif-badge">GIF PREVIEW</div>
     </div>
+    <div class="share-options">
+      <div class="share-row"><span class="share-label">Link</span><input class="share-input" id="shareLink" readonly><button class="share-copy" onclick="copyShareField('shareLink')">Copy</button></div>
+      <div class="share-row"><span class="share-label">Embed</span><input class="share-input" id="shareEmbed" readonly><button class="share-copy" onclick="copyShareField('shareEmbed')">Copy</button></div>
+    </div>
+    <div class="brand-send-section">
+      <div class="brand-send-title">Send to Brand</div>
+      <div class="brand-select-row">
+        <select class="brand-select" id="brandSendSelect"><option value="">— Select a brand —</option></select>
+        <button class="btn-send-brand" onclick="sendToBrand()">Send ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD BRAND MODAL -->
+<div class="modal-overlay" id="addBrandModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addBrandModal')">✕</button>
+    <div class="modal-title">Add Brand</div>
+    <div class="modal-sub">Track outreach and video performance per brand</div>
+    <div class="form-group"><label class="form-label">Brand Name</label><input class="form-input" id="newBrandName" placeholder="e.g. Gucci, Fenty Beauty…"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contact Name</label><input class="form-input" id="newBrandContact" placeholder="e.g. Aria Johnson"></div>
+      <div class="form-group"><label class="form-label">Deal Value ($)</label><input class="form-input" id="newBrandValue" type="number" placeholder="e.g. 5000"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="newBrandNotes" placeholder="e.g. Spring campaign pitch"></div>
+    <button class="btn-primary" onclick="addBrand()">Add Brand</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  let mode = null;
-  let mediaRecorder = null;
-  let recordedChunks = [];
-  let timerInterval = null;
-  let seconds = 0;
-  let screenStream = null;
-  let webcamStream = null;
-  let library = [];
+let mode=null, mediaRecorder=null, recordedChunks=[], timerInterval=null, seconds=0;
+let screenStream=null, webcamStream=null, library=[], currentShareIdx=null, gifInterval=null;
+let brands=[
+  {name:'Gucci',contact:'Aria Johnson',value:15000,notes:'Spring campaign',status:'watched',views:3,lastSeen:'2 hours ago',videoSent:'Brand Intro v2'},
+  {name:'Fenty Beauty',contact:'Marcus Webb',value:8000,notes:'Product launch collab',status:'opened',views:1,lastSeen:'Yesterday',videoSent:'Velocity Intro'},
+  {name:'Net-a-Porter',contact:'Simone Clark',value:12000,notes:'Avatar Bar demo',status:'responded',views:5,lastSeen:'1 hour ago',videoSent:'Avatar Bar Demo'},
+];
 
-  function setMode(m) {
-    mode = m;
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1)).classList.add('active');
-  }
+function switchPage(p,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(p==='tracker')renderTracker();
+}
 
-  async function toggleRecord() {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      stopRecording();
-    } else {
-      await startRecording();
-    }
-  }
+function switchVTab(t,btn){
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.vtab-panel').forEach(x=>x.classList.remove('active'));
+  document.getElementById('vtab-'+t).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
 
-  async function startRecording() {
-    if (!mode) { showToast('Please select a recording mode first'); return; }
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.add('active');
+}
 
-    try {
-      let combinedStream;
+async function toggleRecord(){
+  if(mediaRecorder&&mediaRecorder.state==='recording'){stopRecording();return;}
+  await startRecording();
+}
 
-      if (mode === 'screen' || mode === 'both') {
-        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-      }
+async function startRecording(){
+  if(!mode){showToast('Select a recording mode first');return;}
+  try{
+    if(mode==='screen'||mode==='both') screenStream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+    if(mode==='webcam'||mode==='both') webcamStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    let stream=mode==='webcam'?webcamStream:screenStream;
+    const vp=document.getElementById('videoPreview');
+    vp.srcObject=stream; vp.muted=true; vp.autoplay=true; vp.controls=false;
+    vp.style.display='block'; document.getElementById('placeholder').style.display='none';
+    if(mode==='both'){document.getElementById('webcamBubble').style.display='block';document.getElementById('webcamVideo').srcObject=webcamStream;}
+    recordedChunks=[];
+    mediaRecorder=new MediaRecorder(stream);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recordedChunks.push(e.data);};
+    mediaRecorder.onstop=handleRecordingStop;
+    mediaRecorder.start();
+    document.getElementById('recIndicator').style.display='flex';
+    const btn=document.getElementById('recordBtn');
+    btn.classList.add('recording');
+    btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> Stop Recording';
+    seconds=0; document.getElementById('timer').style.display='block';
+    timerInterval=setInterval(()=>{seconds++;const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');document.getElementById('timer').textContent=`⏱ ${m}:${s}`;},1000);
+  }catch(err){showToast('Could not start: '+err.message);}
+}
 
-      if (mode === 'webcam' || mode === 'both') {
-        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      }
+function stopRecording(){
+  if(mediaRecorder)mediaRecorder.stop();
+  if(screenStream)screenStream.getTracks().forEach(t=>t.stop());
+  if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());
+  clearInterval(timerInterval);
+  document.getElementById('recIndicator').style.display='none';
+  document.getElementById('webcamBubble').style.display='none';
+  document.getElementById('timer').style.display='none';
+  const btn=document.getElementById('recordBtn');
+  btn.classList.remove('recording');
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg> Start Recording';
+}
 
-if (mode === 'screen') {
-        combinedStream = screenStream;
-        document.getElementById('videoPreview').srcObject = screenStream;
-        document.getElementById('videoPreview').style.display = 'block';
-        document.getElementById('placeholder').style.display = 'none';
-      } else if (mode === 'webcam') {
-        combinedStream = webcamStream;
-        document.getElementById('videoPreview').srcObject = webcamStream;
-        document.getElementById('videoPreview').style.display = 'block';
-        document.getElementById('placeholder').style.display = 'none';
-      } else if (mode === 'both') {
-        combinedStream = screenStream;
-        document.getElementById('videoPreview').srcObject = screenStream;
-        document.getElementById('videoPreview').style.display = 'block';
-        document.getElementById('placeholder').style.display = 'none';
-        document.getElementById('webcamBubble').style.display = 'block';
-        document.getElementById('webcamVideo').srcObject = webcamStream;
-      }
+function handleRecordingStop(){
+  const blob=new Blob(recordedChunks,{type:'video/webm'});
+  const url=URL.createObjectURL(blob);
+  const vp=document.getElementById('videoPreview');
+  vp.srcObject=null; vp.src=url; vp.muted=false; vp.controls=true; vp.autoplay=false;
+  vp.style.display='block'; document.getElementById('placeholder').style.display='none';
+  const name=`Recording ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  library.unshift({name,duration:formatDuration(seconds),url,blob});
+  renderLibrary(); runAI(blob,name); addActivity(`You recorded "${name}"`,'Just now');
+}
 
-      recordedChunks = [];
-      mediaRecorder = new MediaRecorder(combinedStream);
-      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-      mediaRecorder.onstop = handleRecordingStop;
-      mediaRecorder.start();
+function handleUpload(e){
+  const file=e.target.files[0]; if(!file)return;
+  const url=URL.createObjectURL(file);
+  const vp=document.getElementById('videoPreview');
+  vp.srcObject=null; vp.src=url; vp.muted=false; vp.controls=true; vp.autoplay=false;
+  vp.style.display='block'; document.getElementById('placeholder').style.display='none';
+  library.unshift({name:file.name,duration:'—',url,blob:file});
+  renderLibrary(); runAI(file,file.name); addActivity(`You uploaded "${file.name}"`,'Just now');
+  showToast('Video uploaded — generating AI insights…');
+}
 
-      document.getElementById('recIndicator').style.display = 'flex';
-      document.getElementById('recordBtn').classList.add('recording');
-      document.getElementById('recordBtn').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> Stop Recording';
-
-      seconds = 0;
-      document.getElementById('timer').style.display = 'block';
-      timerInterval = setInterval(() => {
-        seconds++;
-        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const s = String(seconds % 60).padStart(2, '0');
-        document.getElementById('timer').textContent = `⏱ ${m}:${s}`;
-      }, 1000);
-
-    } catch (err) {
-      showToast('Could not start recording: ' + err.message);
-    }
-  }
-
-  function stopRecording() {
-    if (mediaRecorder) mediaRecorder.stop();
-    if (screenStream) screenStream.getTracks().forEach(t => t.stop());
-    if (webcamStream) webcamStream.getTracks().forEach(t => t.stop());
-    clearInterval(timerInterval);
-    document.getElementById('recIndicator').style.display = 'none';
-    document.getElementById('recordBtn').classList.remove('recording');
-    document.getElementById('recordBtn').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg> Start Recording';
-    document.getElementById('timer').style.display = 'none';
-    document.getElementById('webcamBubble').style.display = 'none';
-  }
-
-  function handleRecordingStop() {
-    const blob = new Blob(recordedChunks, { type: 'video/webm' });
-    const url = URL.createObjectURL(blob);
-    const duration = formatDuration(seconds);
-    const name = `Recording ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
-    addToLibrary(name, duration, url, blob);
-    runAI(blob, name);
-  }
-
-  function handleUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    addToLibrary(file.name, '—', url, file);
-    runAI(file, file.name);
-    showToast('File uploaded — generating AI insights…');
-  }
-
-  function addToLibrary(name, duration, url, blob) {
-    library.unshift({ name, duration, url, blob });
-    renderLibrary();
-  }
-
-  function renderLibrary() {
-    const list = document.getElementById('libraryList');
-    if (library.length === 0) { list.innerHTML = '<div class="empty-state">No recordings yet</div>'; return; }
-    list.innerHTML = library.map((item, i) => `
-      <div class="library-item">
-        <div class="lib-thumb">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
-        </div>
-        <div class="lib-info">
-          <div class="lib-name">${item.name}</div>
-          <div class="lib-meta">${item.duration}</div>
-        </div>
-        <button class="lib-share" onclick="openShare(${i})" title="Share / Embed">⬆</button>
-        <button class="lib-share" onclick="downloadItem(${i})" title="Download" style="margin-left:4px">↓</button>
+function renderLibrary(){
+  const list=document.getElementById('libraryList');
+  if(!library.length){list.innerHTML='<div class="empty-state">No recordings yet.<br>Hit record or upload a video to get started.</div>';return;}
+  list.innerHTML=library.map((item,i)=>`
+    <div class="library-item">
+      <div class="lib-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><polygon points="5,3 19,12 5,21" fill="#6B7280"/></svg></div>
+      <div class="lib-info"><div class="lib-name">${item.name}</div><div class="lib-meta">${item.duration}</div></div>
+      <div class="lib-actions">
+        <button class="lib-btn" onclick="openShare(${i})">Share ⬆</button>
+        <button class="lib-btn" onclick="downloadItem(${i})">↓</button>
       </div>
-    `).join('');
+    </div>`).join('');
+}
+
+function downloadItem(i){const a=document.createElement('a');a.href=library[i].url;a.download=library[i].name+'.webm';a.click();}
+
+function addActivity(text,time){
+  const list=document.getElementById('activityList');
+  const old=list.querySelector('.ai-idle');if(old)old.remove();
+  list.insertAdjacentHTML('afterbegin',`<div class="activity-item"><div class="activity-avatar">TW</div><div class="activity-text">${text}</div><div class="activity-time">${time}</div></div>`);
+}
+
+async function runAI(blob,name){
+  document.getElementById('transcriptIdle').style.display='none';
+  document.getElementById('aiLoading').style.display='flex';
+  document.getElementById('aiResults').style.display='none';
+  switchVTab('transcript',document.querySelectorAll('.vtab')[3]);
+  const prompt=`You are the AI engine for Bashful!, a video recording platform by Velocity Agentic. A video named "${name}" was just recorded/uploaded. Generate realistic AI output as if you analyzed a brand/business video. Velocity Agentic runs: The Avatar Bar (AI avatar training), Bashful! (video recording), Prayer Gallery, and Ava (viral analysis).
+Return ONLY valid JSON, no markdown:
+{"transcript":"3-4 sentence realistic business transcript excerpt","hashtags":["#tag1","#tag2","#tag3","#tag4","#tag5","#tag6"],"keywords":["keyword1","keyword2","keyword3","keyword4"],"checklist":["Action item 1","Action item 2","Action item 3","Action item 4","Action item 5"]}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content.map(b=>b.text||'').join('');
+    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+    document.getElementById('transcriptBox').textContent=parsed.transcript;
+    document.getElementById('tagsWrap').innerHTML=[...parsed.hashtags,...parsed.keywords].map(t=>`<span class="tag">${t}</span>`).join('');
+    document.getElementById('checklist').innerHTML=parsed.checklist.map(item=>`<li><div class="check-box" onclick="this.classList.toggle('checked')"></div><span>${item}</span></li>`).join('');
+    document.getElementById('aiLoading').style.display='none';
+    document.getElementById('aiResults').style.display='block';
+    showToast('AI analysis complete ✓');
+  }catch(err){
+    document.getElementById('aiLoading').style.display='none';
+    document.getElementById('transcriptIdle').style.display='block';
+    document.getElementById('transcriptIdle').textContent='AI analysis failed. Check connection.';
   }
+}
 
-  function downloadItem(i) {
-    const item = library[i];
-    const a = document.createElement('a');
-    a.href = item.url;
-    a.download = item.name + '.webm';
-    a.click();
-  }
+async function generateDoc(type){
+  document.getElementById('genOutput').style.display='none';
+  document.getElementById('genLoading').style.display='flex';
+  const videoName=library[0]?library[0].name:'your video';
+  const transcript=document.getElementById('transcriptBox').textContent||'';
+  const prompt=`You are the AI engine for Bashful! by Velocity Agentic. Generate a realistic ${type} based on a business video called "${videoName}". ${transcript?'Transcript: '+transcript:'Create a realistic brand/business example.'} Keep it concise and professional. Return plain text only.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content.map(b=>b.text||'').join('');
+    document.getElementById('genOutputLabel').textContent=type;
+    document.getElementById('genOutputBox').textContent=text;
+    document.getElementById('genLoading').style.display='none';
+    document.getElementById('genOutput').style.display='block';
+    showToast(`${type} generated ✓`);
+  }catch(err){document.getElementById('genLoading').style.display='none';showToast('Generation failed.');}
+}
 
-  async function runAI(blob, name) {
-    document.getElementById('aiIdle').style.display = 'none';
-    document.getElementById('aiLoading').classList.add('visible');
-    document.getElementById('aiResults').classList.remove('visible');
-
-    // Build prompt for Claude
-    const prompt = `You are an AI content analyst for Bloombush, a video recording and sharing platform built by Velocity Agentic. A user just recorded or uploaded a video called "${name}". 
-
-Since we cannot transcribe the actual audio in this browser demo, generate a REALISTIC example output as if you had fully analyzed a brand/business video recording. The user runs Velocity Agentic with platforms including The Avatar Bar (AI avatar training), Bloombush (video recording), Prayer Gallery, and Ava (viral video analysis).
-
-Return ONLY valid JSON with this exact structure, no markdown, no explanation:
-{
-  "transcript": "A realistic 3-4 sentence transcript excerpt that sounds like a business/brand recording from Velocity Agentic",
-  "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5", "#tag6", "#tag7", "#tag8"],
-  "keywords": ["keyword1", "keyword2", "keyword3", "keyword4"],
-  "checklist": ["Action item 1", "Action item 2", "Action item 3", "Action item 4", "Action item 5"]
-}`;
-
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
-
-      const data = await res.json();
-      const text = data.content.map(b => b.text || '').join('');
-      const clean = text.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(clean);
-
-      document.getElementById('transcriptBox').textContent = parsed.transcript;
-
-      const allTags = [...parsed.hashtags, ...parsed.keywords];
-      document.getElementById('tagsWrap').innerHTML = allTags.map(t => `<span class="tag">${t}</span>`).join('');
-
-      const cl = document.getElementById('checklist');
-      cl.innerHTML = parsed.checklist.map(item => `
-        <li>
-          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
-          <span>${item}</span>
-        </li>
-      `).join('');
-
-      document.getElementById('aiLoading').classList.remove('visible');
-      document.getElementById('aiResults').classList.add('visible');
-      showToast('AI analysis complete ✓');
-
-    } catch (err) {
-      document.getElementById('aiLoading').classList.remove('visible');
-      document.getElementById('aiIdle').style.display = 'block';
-      document.getElementById('aiIdle').textContent = 'AI analysis failed. Check connection.';
-    }
-  }
-
-  function copyText(id) {
-    const text = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard ✓'));
-  }
-
-  function copyTags() {
-    const tags = [...document.querySelectorAll('.tag')].map(t => t.textContent).join(' ');
-    navigator.clipboard.writeText(tags).then(() => showToast('Tags copied ✓'));
-  }
-
-  function formatDuration(s) {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  // ── PAGE SWITCHING ──────────────────────────────
-  function switchPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    event.target.classList.add('active');
-    if (page === 'tracker') renderTracker();
-  }
-
-  // ── SHARE MODAL ─────────────────────────────────
-  let currentShareIdx = null;
-  let gifAnimating = false;
-  let gifInterval = null;
-
-  function openShare(i) {
-    currentShareIdx = i;
-    const item = library[i];
-    const fakeId = Math.random().toString(36).slice(2, 10);
-    document.getElementById('shareLink').value = `https://bashful.velocityagentic.com/v/${fakeId}`;
-    document.getElementById('shareEmbed').value = `<a href="https://bashful.velocityagentic.com/v/${fakeId}"><img src="https://bashful.velocityagentic.com/gif/${fakeId}.gif" style="border-radius:8px;max-width:100%"/></a>`;
-    renderGifPreview(item);
-    populateBrandSelect();
-    document.getElementById('shareModal').classList.add('open');
-  }
-
-  function renderGifPreview(item) {
-    const canvas = document.getElementById('gifCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 480; canvas.height = 270;
-
-    // Animated GIF simulation — cycling gradient frames
-    let frame = 0;
-    clearInterval(gifInterval);
-
-    const colors = [
-      ['#07091A','#1C3A20','#FF3CAC'],
-      ['#1C3A20','#2A5230','#FF6B35'],
-      ['#07091A','#0C0F26','#FF3CAC'],
-      ['#0C0F26','#07091A','#8888FF'],
-    ];
-
-    function drawFrame() {
-      const c = colors[frame % colors.length];
-      const grad = ctx.createLinearGradient(0, 0, 480, 270);
-      grad.addColorStop(0, c[0]);
-      grad.addColorStop(0.6, c[1]);
-      grad.addColorStop(1, c[2] + '44');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 480, 270);
-
-      // Play icon
-      ctx.fillStyle = 'rgba(255,60,172,0.15)';
-      ctx.beginPath();
-      ctx.arc(240, 135, 50, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#FF3CAC';
-      ctx.beginPath();
-      ctx.moveTo(226, 113); ctx.lineTo(226, 157); ctx.lineTo(264, 135);
-      ctx.closePath(); ctx.fill();
-
-      // Title bar
-      ctx.fillStyle = 'rgba(0,0,0,0.5)';
-      ctx.fillRect(0, 230, 480, 40);
-      ctx.fillStyle = '#EEF0FF';
-      ctx.font = '13px DM Sans, sans-serif';
-      ctx.fillText(item ? item.name : 'bashful! Recording', 16, 251);
-      ctx.fillStyle = '#FF3CAC';
-      ctx.font = 'bold 11px DM Sans, sans-serif';
-      ctx.fillText('BLOOMBUSH', 400, 251);
-
-      frame++;
-    }
-
-    drawFrame();
-    gifInterval = setInterval(drawFrame, 500);
-  }
-
-  function toggleGifPlay() {
-    // In real implementation this would play the actual video
-    showToast('Video preview — embed link copied to clipboard');
-    copyShareField('shareEmbed');
-  }
-
-  function copyShareField(id) {
-    const val = document.getElementById(id).value;
-    navigator.clipboard.writeText(val).then(() => showToast('Copied ✓'));
-  }
-
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-    if (id === 'shareModal') clearInterval(gifInterval);
-  }
-
-  // ── BRAND TRACKER ────────────────────────────────
-  let brands = [
-    { name: 'Gucci', contact: 'Aria Johnson', value: 15000, notes: 'Spring campaign pitch', status: 'watched', views: 3, lastSeen: '2 hours ago', videoSent: 'Brand Intro v2' },
-    { name: 'Fenty Beauty', contact: 'Marcus Webb', value: 8000, notes: 'Product launch collab', status: 'opened', views: 1, lastSeen: 'Yesterday', videoSent: 'Velocity Intro' },
-    { name: 'Net-a-Porter', contact: 'Simone Clark', value: 12000, notes: 'Avatar Bar demo', status: 'responded', views: 5, lastSeen: '1 hour ago', videoSent: 'Avatar Bar Demo' },
-    { name: 'Charlotte Tilbury', contact: '—', value: 6000, notes: 'Cold outreach', status: 'sent', views: 0, lastSeen: '—', videoSent: 'Bloombush Demo' },
-  ];
-
-  const statusCycle = ['pending','sent','opened','watched','responded','deal'];
-  const statusLabels = { pending:'Pending', sent:'Sent', opened:'Opened', watched:'Watched', responded:'Responded', deal:'Deal Closed 🎉' };
-
-  function renderTracker() {
-    const tbody = document.getElementById('brandTableBody');
-    if (brands.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;">No brands yet — click Add Brand</td></tr>';
-    } else {
-      tbody.innerHTML = brands.map((b, i) => `
-        <tr style="animation-delay:${i * 0.05}s">
-          <td>
-            <div class="brand-name-cell">${b.name}</div>
-            <div class="brand-contact">${b.contact}${b.value ? ' · $' + b.value.toLocaleString() : ''}</div>
-          </td>
-          <td style="font-size:12px;color:var(--muted)">${b.videoSent || '—'}</td>
-          <td>
-            <button class="status-badge status-${b.status}" onclick="cycleStatus(${i})" title="Click to update status">
-              ${statusLabels[b.status]}
-            </button>
-          </td>
-          <td class="views-cell"><strong>${b.views}</strong> view${b.views !== 1 ? 's' : ''}</td>
-          <td class="last-seen">${b.lastSeen}</td>
-          <td>
-            <div class="brand-actions">
-              <button class="btn-icon" title="Notes: ${b.notes}">📝</button>
-              <button class="btn-icon" onclick="removeBrand(${i})" title="Remove">✕</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-    updateStats();
-  }
-
-  function updateStats() {
-    document.getElementById('statTotal').textContent = brands.length;
-    document.getElementById('statOpened').textContent = brands.filter(b => ['opened','watched','responded','deal'].includes(b.status)).length;
-    document.getElementById('statWatched').textContent = brands.filter(b => ['watched','responded','deal'].includes(b.status)).length;
-    document.getElementById('statDeals').textContent = brands.filter(b => b.status === 'deal').length;
-  }
-
-  function cycleStatus(i) {
-    const idx = statusCycle.indexOf(brands[i].status);
-    brands[i].status = statusCycle[(idx + 1) % statusCycle.length];
-    if (['opened','watched'].includes(brands[i].status)) {
-      brands[i].views++;
-      brands[i].lastSeen = 'Just now';
-    }
-    renderTracker();
-    showToast(`${brands[i].name} → ${statusLabels[brands[i].status]}`);
-  }
-
-  function removeBrand(i) {
-    brands.splice(i, 1);
-    renderTracker();
-    showToast('Brand removed');
-  }
-
-  function openAddBrand() {
-    document.getElementById('newBrandName').value = '';
-    document.getElementById('newBrandContact').value = '';
-    document.getElementById('newBrandValue').value = '';
-    document.getElementById('newBrandNotes').value = '';
-    document.getElementById('addBrandModal').classList.add('open');
-  }
-
-  function addBrand() {
-    const name = document.getElementById('newBrandName').value.trim();
-    if (!name) { showToast('Brand name required'); return; }
-    brands.push({
-      name,
-      contact: document.getElementById('newBrandContact').value || '—',
-      value: parseInt(document.getElementById('newBrandValue').value) || 0,
-      notes: document.getElementById('newBrandNotes').value || '',
-      status: 'pending',
-      views: 0,
-      lastSeen: '—',
-      videoSent: library[0] ? library[0].name : '—'
-    });
-    closeModal('addBrandModal');
-    renderTracker();
-    populateBrandSelect();
-    showToast(`${name} added to tracker ✓`);
-  }
-
-  function populateBrandSelect() {
-    const sel = document.getElementById('brandSendSelect');
-    sel.innerHTML = '<option value="">— Select a brand —</option>' +
-      brands.map((b, i) => `<option value="${i}">${b.name}</option>`).join('');
-  }
-
-  function sendToBrand() {
-    const idx = document.getElementById('brandSendSelect').value;
-    if (idx === '') { showToast('Select a brand first'); return; }
-    const brand = brands[parseInt(idx)];
-    if (currentShareIdx !== null && library[currentShareIdx]) {
-      brand.videoSent = library[currentShareIdx].name;
-    }
-    brand.status = 'sent';
-    brand.lastSeen = 'Just now';
-    closeModal('shareModal');
-    showToast(`Video sent to ${brand.name} ✓`);
-    renderTracker();
-  }
-
-  // Close modals on overlay click
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) {
-        overlay.classList.remove('open');
-        clearInterval(gifInterval);
-      }
-    });
-  });
-
-  // Init
+function openShare(i){
+  currentShareIdx=i;
+  const fakeId=Math.random().toString(36).slice(2,10);
+  document.getElementById('shareLink').value=`https://bashful.velocityagentic.com/v/${fakeId}`;
+  document.getElementById('shareEmbed').value=`<a href="https://bashful.velocityagentic.com/v/${fakeId}"><img src="https://bashful.velocityagentic.com/gif/${fakeId}.gif" style="border-radius:8px;max-width:100%"/></a>`;
+  renderGifPreview(library[i]);
   populateBrandSelect();
+  document.getElementById('shareModal').classList.add('open');
+  addActivity(`You shared "${library[i].name}"`,'Just now');
+}
+
+function renderGifPreview(item){
+  const canvas=document.getElementById('gifCanvas'),ctx=canvas.getContext('2d');
+  canvas.width=480;canvas.height=270;
+  let frame=0; clearInterval(gifInterval);
+  function draw(){
+    const g=ctx.createLinearGradient(0,0,480,270);
+    g.addColorStop(0,frame%2===0?'#1F2937':'#111827');g.addColorStop(1,'#0F172A');
+    ctx.fillStyle=g;ctx.fillRect(0,0,480,270);
+    ctx.fillStyle='rgba(255,60,172,0.12)';ctx.beginPath();ctx.arc(240,135,60,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#FF3CAC';ctx.beginPath();ctx.moveTo(226,113);ctx.lineTo(226,157);ctx.lineTo(264,135);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,235,480,35);
+    ctx.fillStyle='#fff';ctx.font='12px sans-serif';ctx.fillText(item?item.name:'Bashful! Recording',14,257);
+    ctx.fillStyle='#FF3CAC';ctx.font='bold 11px sans-serif';ctx.fillText('BASHFUL!',400,257);
+    frame++;
+  }
+  draw();gifInterval=setInterval(draw,500);
+}
+
+function copyShareField(id){navigator.clipboard.writeText(document.getElementById(id).value).then(()=>showToast('Copied ✓'));}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='shareModal')clearInterval(gifInterval);}
+
+const statusCycle=['pending','sent','opened','watched','responded','deal'];
+const statusLabels={pending:'Pending',sent:'Sent',opened:'Opened',watched:'Watched',responded:'Responded',deal:'Deal Closed 🎉'};
+
+function renderTracker(){
+  const tbody=document.getElementById('brandTableBody');
+  tbody.innerHTML=brands.length===0?'<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);font-size:13px">No brands yet</td></tr>':brands.map((b,i)=>`
+    <tr>
+      <td><div class="brand-name-cell">${b.name}</div><div class="brand-contact">${b.contact}${b.value?' · $'+b.value.toLocaleString():''}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${b.videoSent||'—'}</td>
+      <td><button class="status-badge status-${b.status}" onclick="cycleStatus(${i})">${statusLabels[b.status]}</button></td>
+      <td><strong>${b.views}</strong> <span style="color:var(--muted);font-size:12px">view${b.views!==1?'s':''}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${b.lastSeen}</td>
+      <td><div style="display:flex;gap:6px"><button class="btn-icon" title="${b.notes}">📝</button><button class="btn-icon" onclick="removeBrand(${i})">✕</button></div></td>
+    </tr>`).join('');
+  document.getElementById('statTotal').textContent=brands.length;
+  document.getElementById('statOpened').textContent=brands.filter(b=>['opened','watched','responded','deal'].includes(b.status)).length;
+  document.getElementById('statWatched').textContent=brands.filter(b=>['watched','responded','deal'].includes(b.status)).length;
+  document.getElementById('statDeals').textContent=brands.filter(b=>b.status==='deal').length;
+}
+
+function cycleStatus(i){const idx=statusCycle.indexOf(brands[i].status);brands[i].status=statusCycle[(idx+1)%statusCycle.length];if(['opened','watched'].includes(brands[i].status)){brands[i].views++;brands[i].lastSeen='Just now';}renderTracker();showToast(`${brands[i].name} → ${statusLabels[brands[i].status]}`);}
+function removeBrand(i){brands.splice(i,1);renderTracker();showToast('Brand removed');}
+function openAddBrand(){['newBrandName','newBrandContact','newBrandValue','newBrandNotes'].forEach(id=>document.getElementById(id).value='');document.getElementById('addBrandModal').classList.add('open');}
+function addBrand(){
+  const name=document.getElementById('newBrandName').value.trim();
+  if(!name){showToast('Brand name required');return;}
+  brands.push({name,contact:document.getElementById('newBrandContact').value||'—',value:parseInt(document.getElementById('newBrandValue').value)||0,notes:document.getElementById('newBrandNotes').value||'',status:'pending',views:0,lastSeen:'—',videoSent:library[0]?library[0].name:'—'});
+  closeModal('addBrandModal');renderTracker();populateBrandSelect();showToast(`${name} added ✓`);
+}
+function populateBrandSelect(){document.getElementById('brandSendSelect').innerHTML='<option value="">— Select a brand —</option>'+brands.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');}
+function sendToBrand(){const idx=document.getElementById('brandSendSelect').value;if(idx===''){showToast('Select a brand first');return;}const brand=brands[parseInt(idx)];if(currentShareIdx!==null&&library[currentShareIdx])brand.videoSent=library[currentShareIdx].name;brand.status='sent';brand.lastSeen='Just now';closeModal('shareModal');showToast(`Video sent to ${brand.name} ✓`);addActivity(`Video sent to ${brand.name}`,'Just now');}
+
+function copyText(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>showToast('Copied ✓'));}
+function copyTags(){navigator.clipboard.writeText([...document.querySelectorAll('.tag')].map(t=>t.textContent).join(' ')).then(()=>showToast('Tags copied ✓'));}
+function formatDuration(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('open');clearInterval(gifInterval);}}));
+populateBrandSelect();
+renderTracker();
 </script>
 </body>
 </html>
